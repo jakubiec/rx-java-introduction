@@ -30,12 +30,26 @@ class ConfirmedTransactionSummarizer {
     }
 
     Single<BigDecimal> summarizeConfirmedTransactions() {
-        return Single.error(new RuntimeException("Not Implemented Yet"));
+        return transactions.get()
+                .zipWith(confirmations.get(), ConfirmedTransaction::new)
+                .filter(ct -> ct.confirmation.isConfirmed)
+                .reduce(BigDecimal.ZERO, (v, ct) -> v.add(ct.transaction.value))
+                .onErrorResumeNext(error -> Single.error(new SummarizationException(error.getMessage())));
+    }
+
+    private static class ConfirmedTransaction {
+        final Transaction transaction;
+        final Confirmation confirmation;
+
+        private ConfirmedTransaction(Transaction transaction, Confirmation confirmation) {
+            this.transaction = transaction;
+            this.confirmation = confirmation;
+        }
     }
 
     static class SummarizationException extends RuntimeException {
 
-        public SummarizationException(String message) {
+        SummarizationException(String message) {
             super(message);
         }
     }

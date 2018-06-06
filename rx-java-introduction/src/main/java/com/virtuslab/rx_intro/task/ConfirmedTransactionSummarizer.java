@@ -12,7 +12,7 @@ import java.util.function.Supplier;
  * HINT:
  * - Use zip operator to match transactions with confirmations. They will appear in order
  * - Filter only confirmed
- * - Aggregate value of confirmed transactions
+ * - Aggregate value of confirmed transactions using reduce operator
  *
  * HINT2:
  * - add error handling which will wrap an error into SummarizationException
